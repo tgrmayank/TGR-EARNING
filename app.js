@@ -1,57 +1,71 @@
 import {
-  auth, db,
-  RecaptchaVerifier, signInWithPhoneNumber,
-  PhoneAuthProvider, signInWithCredential,
-  doc, setDoc, getDoc, updateDoc, arrayUnion,
-  signOut
+  auth,
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+  PhoneAuthProvider,
+  signInWithCredential
 } from "./firebase.js";
 
 let verificationId;
 
-// captcha only once
+// INIT CAPTCHA (only once)
 window.onload = () => {
-  if (document.getElementById("recaptcha")) {
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha', {
-      size: 'invisible'
+  const el = document.getElementById("recaptcha");
+  if (el) {
+    window.recaptchaVerifier = new RecaptchaVerifier(auth, el, {
+      size: "invisible"
     });
+
+    window.recaptchaVerifier.render();
   }
 };
 
 // SEND OTP
 window.sendOTP = async () => {
-  const phone = "+91" + document.getElementById("phone").value;
+  try {
+    const num = document.getElementById("phone").value.trim();
 
-  const res = await signInWithPhoneNumber(auth, phone, window.recaptchaVerifier);
-  verificationId = res.verificationId;
-  sessionStorage.setItem("vid", verificationId);
-  location = "otp.html";
+    if (!/^[0-9]{10}$/.test(num)) {
+      alert("Enter valid 10 digit number");
+      return;
+    }
+
+    const phone = "+91" + num;
+
+    const result = await signInWithPhoneNumber(
+      auth,
+      phone,
+      window.recaptchaVerifier
+    );
+
+    verificationId = result.verificationId;
+    sessionStorage.setItem("vid", verificationId);
+
+    alert("OTP Sent");
+    location = "otp.html";
+
+  } catch (e) {
+    alert("Error: " + e.message);
+    console.log(e);
+  }
 };
 
 // VERIFY OTP
 window.verifyOTP = async () => {
-  const code = document.getElementById("otp").value;
-  const vid = sessionStorage.getItem("vid");
+  try {
+    const code = document.getElementById("otp").value;
+    const vid = sessionStorage.getItem("vid");
 
-  const cred = PhoneAuthProvider.credential(vid, code);
-  const user = await signInWithCredential(auth, cred);
+    const cred = PhoneAuthProvider.credential(vid, code);
+    await signInWithCredential(auth, cred);
 
-  const ref = doc(db, "users", user.user.uid);
-  const snap = await getDoc(ref);
+    alert("Login Success");
+    location = "home.html";
 
-  if (!snap.exists()) {
-    await setDoc(ref, { coins: 0, history: [] });
+  } catch {
+    alert("Wrong OTP");
   }
-
-  location = "home.html";
-};
-
-// SPIN
-window.spin = async () => {
-  const values = [10,20,30,40,50,100];
-  const val = values[Math.floor(Math.random()*values.length)];
-
-  const user = auth.currentUser;
-  const ref = doc(db, "users", user.uid);
+};oc(db, "users", user.uid);
   const snap = await getDoc(ref);
 
   const coins = snap.data().coins || 0;

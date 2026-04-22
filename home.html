@@ -1,12 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
 <div class="container">
-<div class="card">
-<h2>Coins: <span id="coins"></span></h2>
-<button onclick="location='spin.html'">Spin</button>
-<button onclick="location='history.html'">History</button>
-<button onclick="location='profile.html'">Profile</button>
-<button onclick="logout()">Logout</button>
+  <div class="card">
+
+    <h2>TGR MAYANK</h2>
+    <p>Coins: <span id="coins">0</span></p>
+
+    <button onclick="goSpin()">🎯 Spin & Earn</button>
+    <button onclick="goHistory()">📜 History</button>
+    <button onclick="goProfile()">👤 Profile</button>
+    <button onclick="logout()">🚪 Logout</button>
+
+  </div>
 </div>
-</div>
+
 <script type="module" src="app.js"></script>
-<script>loadData()</script>
+
+</body>
+</html>
