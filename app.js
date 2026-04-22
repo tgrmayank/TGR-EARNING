@@ -6,19 +6,23 @@ import {
   signInWithCredential
 } from "./firebase.js";
 
-let verificationId;
+let verifier;
 
-// INIT CAPTCHA (only once)
-window.onload = () => {
-  const el = document.getElementById("recaptcha");
-  if (el) {
-    window.recaptchaVerifier = new RecaptchaVerifier(auth, el, {
+// INIT
+window.addEventListener("load", async () => {
+  const container = document.getElementById("recaptcha");
+
+  if (container) {
+    verifier = new RecaptchaVerifier(auth, container, {
       size: "invisible"
     });
 
-    window.recaptchaVerifier.render();
+    await verifier.render();
+    window.recaptchaVerifier = verifier;
+
+    console.log("Captcha Ready");
   }
-};
+});
 
 // SEND OTP
 window.sendOTP = async () => {
@@ -26,7 +30,7 @@ window.sendOTP = async () => {
     const num = document.getElementById("phone").value.trim();
 
     if (!/^[0-9]{10}$/.test(num)) {
-      alert("Enter valid 10 digit number");
+      alert("Enter valid number");
       return;
     }
 
@@ -38,15 +42,14 @@ window.sendOTP = async () => {
       window.recaptchaVerifier
     );
 
-    verificationId = result.verificationId;
-    sessionStorage.setItem("vid", verificationId);
+    sessionStorage.setItem("vid", result.verificationId);
 
     alert("OTP Sent");
     location = "otp.html";
 
   } catch (e) {
+    console.error(e);
     alert("Error: " + e.message);
-    console.log(e);
   }
 };
 
@@ -62,11 +65,10 @@ window.verifyOTP = async () => {
     alert("Login Success");
     location = "home.html";
 
-  } catch {
+  } catch (e) {
     alert("Wrong OTP");
   }
-};oc(db, "users", user.uid);
-  const snap = await getDoc(ref);
+};const snap = await getDoc(ref);
 
   const coins = snap.data().coins || 0;
 

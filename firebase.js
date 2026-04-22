@@ -14,7 +14,6 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-
 export const auth = getAuth(app);
 
 export {
@@ -22,7 +21,7 @@ export {
   signInWithPhoneNumber,
   PhoneAuthProvider,
   signInWithCredential
-};ctId: "tgrpay-98bf4"
+};;ctId: "tgrpay-98bf4"
 };
 
 const app = initializeApp(firebaseConfig);
